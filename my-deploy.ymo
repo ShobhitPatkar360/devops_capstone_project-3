@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy
+  annotations: 
+    kubernetes.io/change-cause: "project 2" 
+spec:
+  minReadySeconds: 10 
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: my-pod
+      labels:
+        app: myapp1
+    spec:
+      containers:
+      - name: my-container
+        image: shubh360/my-web:latest
