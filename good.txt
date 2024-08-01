@@ -1,2 +1,1 @@
-hi shobhit, i liks to solve the ruby's cube
-Here I had set up the artifacts, I hope everthing is visible to 2nd project
+wow there is no need of artifact kind of rubbish thing, we can get the file directly
