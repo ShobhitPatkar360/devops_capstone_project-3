@@ -2,7 +2,7 @@
 FROM nginx:latest
 
 # Copy your custom Nginx configuration file (if needed)
-COPY index.html /usr/share/nginx/html/index.html
+COPY ./* /usr/share/nginx/html
 
 # Expose port 80 for HTTP traffic
 EXPOSE 80
