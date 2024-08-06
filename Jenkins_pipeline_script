@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                // Get some code from a GitHub repository
+                git branch: 'main', credentialsId: 'github123', url: 'https://github.com/ShobhitPatkar360/project-3.git'
+                sh 'pwd && ls'
+            }
+        }
+        stage('Generate Docker image') {
+            steps {
+                echo 'stop the container  and remove it if there is any running one'
+                sh 'docker stop my-web || true && docker rm my-web || true && docker rmi my-web || true '
+                
+                echo 'Create an image from Dockerfile'
+                sh 'docker build . -t shubh360/my-web:latest '
+                
+                echo 'Printing the images'
+                sh 'docker image ls'
+            }
+        }
+        stage('Docker Push') {
+          steps {
+            withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+            sh 'echo "$DOCKERHUB_PASSOWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin'
+            sh "docker push shubh360/my-web:latest"
+            }
+          }   
+        }
+        stage('Creating Deployment and Service') {
+            steps {
+                sh 'echo "deleting old deployment"'
+                sh 'kubectl delete deploy my-deploy || true'
+                sh 'echo "creating deployment and service"'
+                sh 'kubectl apply -f my-deploy.yml'
+                sh 'kubectl apply -f node-port.yml'
+                sh 'kubectl get deploy && kubectl get svc'
+                
+                echo 'you have to execute  following commoand manually' 
+                echo 'minikube service my-nodeport-service --url'
+            }
+        }
+    }
+}
